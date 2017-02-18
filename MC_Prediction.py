@@ -20,7 +20,7 @@ def policy(state):
 no_of_episodes = 100000
 TIME_STEP_LIMIT = 50
 discount = 0.9
-alpha = 0.2
+alpha = 0.001
 state_value = defaultdict(float)
 for i in range(no_of_episodes):
     print("#EPISODE"+str(i))
@@ -49,7 +49,8 @@ for i in range(no_of_episodes):
                 for i in range(time_step+1):
                     if state_list[i] in state_value:
                         # incremental mean
-                        state_value[state_list[i]] = state_value[state_list[i]] + alpha*(g[i] - state_value[state_list[i]])
+                        mc_error = (g[i] - state_value[state_list[i]])
+                        state_value[state_list[i]] = state_value[state_list[i]] + alpha*mc_error
                     else:
                         state_value[state_list[i]] = g[i]
                 break
