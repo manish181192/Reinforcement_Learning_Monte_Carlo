@@ -1,6 +1,7 @@
 import gym
 from gym import spaces
 from gym.utils import seeding
+from enum import Enum
 
 def cmp(a, b):
     return int((a > b)) - int((a < b))
@@ -37,7 +38,6 @@ def score(hand):  # What is the score of this hand (0 if bust)
 
 def is_natural(hand):  # Is this hand a natural blackjack?
     return sorted(hand) == [1, 10]
-
 
 class BlackjackEnv(gym.Env):
     """Simple blackjack environment
