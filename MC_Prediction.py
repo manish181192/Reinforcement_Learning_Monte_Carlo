@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib
 import plotting
 from collections import defaultdict
+from time import time
 matplotlib.style.use('ggplot')
 
 bj = BlackjackEnv()
@@ -21,6 +22,7 @@ TIME_STEP_LIMIT = 50
 discount = 0.6
 alpha = 0.001
 state_value = defaultdict(float)
+start_time = time()
 for i in range(no_of_episodes):
     print("#EPISODE"+str(i))
     state_list = [TIME_STEP_LIMIT]
@@ -58,10 +60,10 @@ for i in range(no_of_episodes):
                 ##################################################
             else:
                 state_list.append(state_)
-
+end_time = time()
 for state in state_value:
     print("State: " + str(state) + " Value: " + str(state_value[state]))
-
+print("TIME ELAPSED: "+ str(end_time- start_time))
 print("No of States Explored: ", len(state_value))
 V_10k = state_value
 plotting.plot_value_function(V_10k, title="100,000 Steps")

@@ -10,7 +10,7 @@ bj = BlackjackEnv()
 
 def policy(state):
     score, dealer_score, usable_ace = state
-    if score >= 20:
+    if score >= 19:
         return 0
     else:
         return 1
@@ -19,8 +19,9 @@ def policy(state):
 
 no_of_episodes = 100000
 TIME_STEP_LIMIT = 50
-discount = 0.9
+discount = 0.6
 alpha = 0.001
+td_N = 2
 state_value = defaultdict(float)
 for i in range(no_of_episodes):
     print("#EPISODE"+str(i))
@@ -30,34 +31,38 @@ for i in range(no_of_episodes):
     action = np.zeros(TIME_STEP_LIMIT, dtype= int)
 
     for time_step in range(TIME_STEP_LIMIT):
-            action[time_step] = policy(state_list[time_step])
-            state_, reward[time_step], isTerminate, _ = bj.step( action= action[time_step])
+        # SAMPLE STATE, REWARD FROM ENV ##########################
+        action[time_step] = policy(state_list[time_step])
+        state_, reward[time_step], isTerminate, _ = bj.step(action=action[time_step])
+        print("State:" + str(state_list[time_step]) + " Action:" + str(action[time_step]) + " REWARD:" + str(reward[time_step]))
+        ##########################################################
+
+        if isTerminate:
+            # compute G(t) for each time step ##############
+            # G(t) = Rt + d*G(t+1)
+            g = np.zeros(time_step + 1)
+            i = time_step
+            prev_g = 0
+            while i >= 0:
+                g[i] = reward[i] + discount * prev_g
+                prev_g = g[i]
+                i = i - 1
+            #################################################
+
+            # FOR EVERY TIME-STEP
+            for i in range(time_step+1):
+                # incremental mean
+                # #caluate TD_N error
+                # discounted_reward = g[i]
+                # min_td = min(td_N, time_step)
+                # for j in range(min_td):
+                #     discounted_reward= discounted_reward + pow(discount,j+1)*reward[j+1]
+                discounted_reward = lambda_discounted_reward()
+                td_error = ( discounted_reward - state_value[state_list[i]])
+                state_value[state_list[i]] = state_value[state_list[i]] + alpha * td_error
+            break
+        else:
             state_list.append(state_)
-            # print("State:" + str(state_list[time_step])+" Action:" + str(action[time_step])+ " REWARD:"+str(reward[time_step]))
-
-            if isTerminate:
-                # calculate G(t) for every time step
-                # G(t) = Rt + d*G(t+1)
-                g = np.zeros(time_step+1)
-                i = time_step
-                prev_g = 0
-                while i>=0:
-                    g[i] = reward[i]+ discount * prev_g
-                    i = i-1
-
-                # calculate v(s) for every state
-                for i in range(time_step+1):
-                    if state_list[i] in state_value:
-                        # incremental mean
-                        #caluate TD-LAMBDA error
-                        discounted_reward = reward[i]
-                        for i in range(td_N):
-                            discounted_reward= discounted_reward + pow(discount,i+1)*state_value[state_list[i+1]]
-                        td_error = ( discounted_reward - state_value[state_list[i]])
-                        state_value[state_list[i]] = state_value[state_list[i]] + alpha * td_error
-                    else:
-                        state_value[state_list[i]] = g[i]
-                break
 
 for state in state_value:
     print("State: " + str(state) + " Value: " + str(state_value[state]))
