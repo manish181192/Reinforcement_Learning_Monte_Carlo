@@ -15,7 +15,7 @@ def policy(state):
     else:
         return 1
 
-### Monte Carlo (Every step) ###
+### Time-Difference- N ###
 
 no_of_episodes = 100000
 TIME_STEP_LIMIT = 50
