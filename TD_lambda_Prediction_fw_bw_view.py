@@ -49,7 +49,11 @@ for i in range(no_of_episodes):
                 for i in range(time_step+1):
                     if state_list[i] in state_value:
                         # incremental mean
-                        td_error = (reward[i] + discount*state_value[state_list[i+1]] - state_value[state_list[i]])
+                        #caluate TD-LAMBDA error
+                        discounted_reward = reward[i]
+                        for i in range(td_N):
+                            discounted_reward= discounted_reward + pow(discount,i+1)*state_value[state_list[i+1]]
+                        td_error = ( discounted_reward - state_value[state_list[i]])
                         state_value[state_list[i]] = state_value[state_list[i]] + alpha * td_error
                     else:
                         state_value[state_list[i]] = g[i]
