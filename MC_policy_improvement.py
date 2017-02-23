@@ -118,7 +118,10 @@ class monte_carlo:
     def time_elapsed(self):
         return self.elapsed_time
 
-    def plot_graph(self):
+    def plot_value_graph(self):
+        plotting.plot_value_function(self.state_value_map, title="100,000 Steps")
+
+    def plot_action_graph(self):
         plotting.plot_value_function(self.state_action_map, title="100,000 Steps")
 # print("No of States Explored: ", len(S_A_dictionary))
 # V_10k = state_value
