@@ -17,6 +17,7 @@ class monte_carlo:
     S_A_dictionary = defaultdict(tuple)
     # [state] => [action] dictionary
     state_action_map = defaultdict(int)
+    state_value_map = defaultdict(float)
 
     action_space = None
     environment = None
@@ -93,10 +94,12 @@ class monte_carlo:
                         action_reward_tuple = (current_action, current_reward)
                         self.S_A_dictionary[state] = action_reward_tuple
                         self.state_action_map[state] = current_action
+                        self.state_value_map[state] = current_reward
                 else:
                     action_reward_tuple = (current_action, current_reward)
                     self.S_A_dictionary[state] = action_reward_tuple
                     self.state_action_map[state] = current_action
+                    self.state_value_map[state] = current_reward
             end_time = time()
             self.elapsed_time = end_time- start_time
 
@@ -107,6 +110,10 @@ class monte_carlo:
     def display_policy(self):
         for state in self.state_action_map:
             print ("STATE: "+str(state)+" ACTION: "+str(self.state_action_map[state]))
+
+    def display_state_values(self):
+        for state in self.state_value_map:
+            print ("STATE: "+str(state)+" VALUE: "+str(self.state_value_map[state]))
 
     def time_elapsed(self):
         return self.elapsed_time
